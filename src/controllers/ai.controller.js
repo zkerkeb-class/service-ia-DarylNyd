@@ -2,8 +2,14 @@ const OpenAI = require('openai');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
-const Analysis = require('../models/analysis.model');
 const { extractSuggestions, extractLearningResources } = require('../utils/analysis.utils');
+
+// Simple file logging function
+const logToFile = (message) => {
+    const logPath = path.join(__dirname, '../../debug.log');
+    const timestamp = new Date().toISOString();
+    fs.appendFileSync(logPath, `[${timestamp}] ${message}\n`);
+};
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -101,8 +107,31 @@ async function analyzeArtwork(req, res) {
             return res.status(400).json({ error: 'Invalid analysis type' });
         }
 
-        // Process image from the saved file path
-        const processedImage = await processImage(req.file.path);
+        // Save image to permanent storage FIRST
+        const imageFileName = `${Date.now()}-${req.file.originalname}`;
+        const uploadsDir = path.join(__dirname, '../../temp/uploads');
+        const imagePath = path.join(uploadsDir, imageFileName);
+        
+        // Ensure uploads directory exists
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        
+        // Copy file to permanent location FIRST
+        try {
+            fs.copyFileSync(req.file.path, imagePath);
+        } catch (copyError) {
+            console.error('Error copying file:', copyError);
+            throw new Error(`Failed to save image: ${copyError.message}`);
+        }
+        
+        // Now clean up the temporary uploaded file
+        fs.unlink(req.file.path, (err) => {
+            if (err) console.error('Error deleting temp file:', err);
+        });
+
+        // Process image from the PERMANENT file path (not the temp one)
+        const processedImage = await processImage(imagePath);
         const base64Image = processedImage.toString('base64');
 
         // Get analysis from OpenAI
@@ -132,17 +161,12 @@ async function analyzeArtwork(req, res) {
             max_tokens: 3000
         });
 
-        // Clean up the uploaded file
-        fs.unlink(req.file.path, (err) => {
-            if (err) console.error('Error deleting file:', err);
-        });
-
         const analysis = response.choices[0].message.content;
         const suggestions = extractSuggestions(analysis);
         const learningResources = extractLearningResources(analysis, analysisType);
 
-        // Create analysis document
-        const analysisDoc = new Analysis({
+        // Create analysis data object
+        const analysisData = {
             filename: req.file.originalname,
             analysis_type: analysisType,
             analysis: analysis,
@@ -152,19 +176,76 @@ async function analyzeArtwork(req, res) {
             file_size: req.file.size,
             content_type: req.file.mimetype,
             user_id: req.user ? req.user._id : null
-        });
+        };
 
-        await analysisDoc.save();
+        // Save to BDD service for better integration
+        const artworkData = {
+            userId: req.user ? req.user._id : null, // Use null instead of 'anonymous' for unauthenticated users
+            title: req.body.title || 'Untitled Artwork',
+            description: req.body.description || '',
+            imageUrl: `${req.protocol}://${req.get('host')}/uploads/${imageFileName}`,
+            analysisType: analysisType,
+            filename: req.file.originalname,
+            fileSize: req.file.size,
+            contentType: req.file.mimetype,
+            metadata: {
+                size: req.body.size || 'Unknown',
+                medium: req.body.medium || 'Digital',
+                style: req.body.style || 'Unknown'
+            }
+        };
+
+        const analysisResults = {
+            technicalQuality: analysis,
+            strengths: '',
+            areasForImprovement: '',
+            suggestions: suggestions,
+            composition: '',
+            colorTheory: '',
+            styleContext: '',
+            learningResources: learningResources
+        };
+
+        // Save to BDD service (only if user is authenticated)
+        const ArtworkService = require('../services/artworkService');
+        let result = { artworkId: null, analysisId: null };
+        
+        logToFile('=== AI Controller Debug ===');
+        logToFile(`- req.user: ${JSON.stringify(req.user)}`);
+        logToFile(`- req.user._id: ${req.user?._id}`);
+        logToFile(`- req.headers.authorization present: ${!!req.headers.authorization}`);
+        
+        if (req.user && req.user._id) {
+            logToFile('- User is authenticated, attempting to save to BDD service');
+            try {
+                result = await ArtworkService.saveAnalysis(artworkData, analysisResults);
+                logToFile('- Analysis saved to BDD service successfully');
+                logToFile(`- Result: ${JSON.stringify(result)}`);
+            } catch (saveError) {
+                logToFile(`Error saving to BDD service: ${saveError.message}`);
+                logToFile(`- Error details: ${saveError.message}`);
+                // Don't throw error, just log it and continue with temporary analysis
+                logToFile('- Continuing with temporary analysis (no database save)');
+            }
+        } else {
+            logToFile('- No authenticated user, creating temporary analysis');
+            logToFile(`- req.user: ${JSON.stringify(req.user)}`);
+            logToFile(`- req.user._id: ${req.user?._id}`);
+        }
 
         res.json({
-            id: analysisDoc._id,
-            filename: analysisDoc.filename,
-            analysis_type: analysisDoc.analysis_type,
-            analysis: analysisDoc.analysis,
-            suggestions: analysisDoc.suggestions,
-            learning_resources: analysisDoc.learning_resources,
-            timestamp: analysisDoc.timestamp,
-            model_used: analysisDoc.model_used
+            id: result.analysisId || `temp-${Date.now()}`, // Use temp ID if no database save
+            artworkId: result.artworkId || `temp-artwork-${Date.now()}`,
+            analysisId: result.analysisId || `temp-analysis-${Date.now()}`,
+            filename: analysisData.filename,
+            analysis_type: analysisData.analysis_type,
+            analysis: analysisData.analysis,
+            suggestions: analysisData.suggestions,
+            learning_resources: analysisData.learning_resources,
+            timestamp: new Date(),
+            model_used: analysisData.model_used,
+            imageUrl: artworkData.imageUrl,
+            isTemporary: !result.analysisId // Flag to indicate if this is a temporary analysis
         });
 
     } catch (error) {
@@ -181,73 +262,6 @@ async function analyzeArtwork(req, res) {
     }
 }
 
-/**
- * Get analysis by ID
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-async function getAnalysis(req, res) {
-    try {
-        const analysis = await Analysis.findById(req.params.id);
-        if (!analysis) {
-            return res.status(404).json({ error: 'Analysis not found' });
-        }
-        res.json(analysis);
-    } catch (error) {
-        res.status(500).json({ 
-            error: `Failed to fetch analysis: ${error.message}` 
-        });
-    }
-}
-
-/**
- * Get recent analyses
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-async function getRecentAnalyses(req, res) {
-    try {
-        const limit = parseInt(req.query.limit) || 10;
-        const analyses = await Analysis.find()
-            .sort({ timestamp: -1 })
-            .limit(limit);
-        res.json(analyses);
-    } catch (error) {
-        res.status(500).json({ 
-            error: `Failed to fetch analyses: ${error.message}` 
-        });
-    }
-}
-
-/**
- * Delete analysis by ID
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-async function deleteAnalysis(req, res) {
-    try {
-        const analysis = await Analysis.findById(req.params.id);
-        if (!analysis) {
-            return res.status(404).json({ error: 'Analysis not found' });
-        }
-
-        // Check if user owns the analysis
-        if (req.user && analysis.user_id && analysis.user_id.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ error: 'Not authorized to delete this analysis' });
-        }
-
-        await analysis.deleteOne();
-        res.json({ message: 'Analysis deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ 
-            error: `Failed to delete analysis: ${error.message}` 
-        });
-    }
-}
-
 module.exports = {
-    analyzeArtwork,
-    getAnalysis,
-    getRecentAnalyses,
-    deleteAnalysis
+    analyzeArtwork
 }; 

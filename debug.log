@@ -1,0 +1,239 @@
+[2025-08-07T02:29:15.648Z] === AI Route Debug ===
+[2025-08-07T02:29:15.649Z] - Request received at /analyze
+[2025-08-07T02:29:15.650Z] - Method: POST
+[2025-08-07T02:29:15.650Z] - Headers: {"host":"localhost:5000","connection":"keep-alive","content-length":"30196","sec-ch-ua-platform":"\"Windows\"","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjliOWFjN2U2MTI4OGI2YzgyMWU4MiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU0NTMzMjE4LCJqdGkiOiIxYWY1YmI3OTllODExMjU1NWE0MjUyMjhiNDE2YjU4YiIsImV4cCI6MTc1NDYxOTYxOCwiYXVkIjoibnlkYXJ0LXVzZXJzIiwiaXNzIjoibnlkYXJ0LWFkdmlzb3IifQ.7AqwnJ3QkN5UHF3lFGBh_cM4gpHDYyiz0P096c98uWI","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","content-type":"multipart/form-data; boundary=----WebKitFormBoundarylGc9gKbB5QPKI93B","sec-ch-ua-mobile":"?0","accept":"*/*","origin":"http://localhost:3000","sec-fetch-site":"same-site","sec-fetch-mode":"cors","sec-fetch-dest":"empty","referer":"http://localhost:3000/","accept-encoding":"gzip, deflate, br, zstd","accept-language":"en-US,en;q=0.9"}
+[2025-08-07T02:29:15.651Z] - Body keys: 
+[2025-08-07T02:29:15.652Z] - Files: undefined
+[2025-08-07T02:29:15.655Z] Auth middleware debug:
+[2025-08-07T02:29:15.656Z] - Auth header present: true
+[2025-08-07T02:29:15.656Z] - Auth header starts with Bearer: true
+[2025-08-07T02:29:15.658Z] - Token length: 303
+[2025-08-07T02:29:15.658Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-07T02:29:15.665Z] - Token decoded successfully
+[2025-08-07T02:29:15.666Z] - Decoded payload: {
+  "id": "6869b9ac7e61288b6c821e82",
+  "role": "user",
+  "iat": 1754533218,
+  "jti": "1af5bb799e8112555a425228b416b58b",
+  "exp": 1754619618,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-07T02:29:15.666Z] - Decoded id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:29:15.667Z] - Decoded userId: undefined
+[2025-08-07T02:29:15.668Z] - Set req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-07T02:29:15.669Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:29:28.900Z] === AI Controller Debug ===
+[2025-08-07T02:29:28.901Z] - req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-07T02:29:28.901Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:29:28.902Z] - req.headers.authorization present: true
+[2025-08-07T02:29:28.902Z] - User is authenticated, attempting to save to BDD service
+[2025-08-07T02:29:28.963Z] - Analysis saved to BDD service successfully
+[2025-08-07T02:29:28.964Z] - Result: {"artworkId":"68940f880710d858499017ab","analysisId":"68940f880710d858499017ad"}
+[2025-08-07T02:49:59.741Z] === AI Route Debug ===
+[2025-08-07T02:49:59.742Z] - Request received at /analyze
+[2025-08-07T02:49:59.744Z] - Method: POST
+[2025-08-07T02:49:59.747Z] - Headers: {"host":"localhost:5000","connection":"keep-alive","content-length":"30196","sec-ch-ua-platform":"\"Windows\"","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjliOWFjN2U2MTI4OGI2YzgyMWU4MiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU0NTMzMjE4LCJqdGkiOiIxYWY1YmI3OTllODExMjU1NWE0MjUyMjhiNDE2YjU4YiIsImV4cCI6MTc1NDYxOTYxOCwiYXVkIjoibnlkYXJ0LXVzZXJzIiwiaXNzIjoibnlkYXJ0LWFkdmlzb3IifQ.7AqwnJ3QkN5UHF3lFGBh_cM4gpHDYyiz0P096c98uWI","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","content-type":"multipart/form-data; boundary=----WebKitFormBoundary4RderRJxudzE3kIU","sec-ch-ua-mobile":"?0","accept":"*/*","origin":"http://localhost:3000","sec-fetch-site":"same-site","sec-fetch-mode":"cors","sec-fetch-dest":"empty","referer":"http://localhost:3000/","accept-encoding":"gzip, deflate, br, zstd","accept-language":"en-US,en;q=0.9"}
+[2025-08-07T02:49:59.748Z] - Body keys: 
+[2025-08-07T02:49:59.751Z] - Files: undefined
+[2025-08-07T02:49:59.759Z] Auth middleware debug:
+[2025-08-07T02:49:59.760Z] - Auth header present: true
+[2025-08-07T02:49:59.762Z] - Auth header starts with Bearer: true
+[2025-08-07T02:49:59.764Z] - Token length: 303
+[2025-08-07T02:49:59.766Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-07T02:49:59.770Z] - Token decoded successfully
+[2025-08-07T02:49:59.770Z] - Decoded payload: {
+  "id": "6869b9ac7e61288b6c821e82",
+  "role": "user",
+  "iat": 1754533218,
+  "jti": "1af5bb799e8112555a425228b416b58b",
+  "exp": 1754619618,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-07T02:49:59.772Z] - Decoded id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:49:59.774Z] - Decoded userId: undefined
+[2025-08-07T02:49:59.777Z] - Set req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-07T02:49:59.779Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:50:19.526Z] === AI Controller Debug ===
+[2025-08-07T02:50:19.527Z] - req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-07T02:50:19.527Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:50:19.528Z] - req.headers.authorization present: true
+[2025-08-07T02:50:19.528Z] - User is authenticated, attempting to save to BDD service
+[2025-08-07T02:50:19.582Z] - Analysis saved to BDD service successfully
+[2025-08-07T02:50:19.583Z] - Result: {"artworkId":"6894146b0710d858499018a1","analysisId":"6894146b0710d858499018a3"}
+[2025-08-07T02:50:39.487Z] === AI Route Debug ===
+[2025-08-07T02:50:39.489Z] - Request received at /analyze
+[2025-08-07T02:50:39.493Z] - Method: POST
+[2025-08-07T02:50:39.495Z] - Headers: {"host":"localhost:5000","connection":"keep-alive","content-length":"6977","sec-ch-ua-platform":"\"Windows\"","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjliOWFjN2U2MTI4OGI2YzgyMWU4MiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU0NTMzMjE4LCJqdGkiOiIxYWY1YmI3OTllODExMjU1NWE0MjUyMjhiNDE2YjU4YiIsImV4cCI6MTc1NDYxOTYxOCwiYXVkIjoibnlkYXJ0LXVzZXJzIiwiaXNzIjoibnlkYXJ0LWFkdmlzb3IifQ.7AqwnJ3QkN5UHF3lFGBh_cM4gpHDYyiz0P096c98uWI","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","content-type":"multipart/form-data; boundary=----WebKitFormBoundarywaqTj3duLw1YfMuW","sec-ch-ua-mobile":"?0","accept":"*/*","origin":"http://localhost:3000","sec-fetch-site":"same-site","sec-fetch-mode":"cors","sec-fetch-dest":"empty","referer":"http://localhost:3000/","accept-encoding":"gzip, deflate, br, zstd","accept-language":"en-US,en;q=0.9"}
+[2025-08-07T02:50:39.496Z] - Body keys: 
+[2025-08-07T02:50:39.496Z] - Files: undefined
+[2025-08-07T02:50:39.497Z] Auth middleware debug:
+[2025-08-07T02:50:39.498Z] - Auth header present: true
+[2025-08-07T02:50:39.498Z] - Auth header starts with Bearer: true
+[2025-08-07T02:50:39.499Z] - Token length: 303
+[2025-08-07T02:50:39.500Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-07T02:50:39.503Z] - Token decoded successfully
+[2025-08-07T02:50:39.504Z] - Decoded payload: {
+  "id": "6869b9ac7e61288b6c821e82",
+  "role": "user",
+  "iat": 1754533218,
+  "jti": "1af5bb799e8112555a425228b416b58b",
+  "exp": 1754619618,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-07T02:50:39.504Z] - Decoded id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:50:39.505Z] - Decoded userId: undefined
+[2025-08-07T02:50:39.508Z] - Set req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-07T02:50:39.509Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:50:55.729Z] === AI Controller Debug ===
+[2025-08-07T02:50:55.729Z] - req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-07T02:50:55.731Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:50:55.731Z] - req.headers.authorization present: true
+[2025-08-07T02:50:55.732Z] - User is authenticated, attempting to save to BDD service
+[2025-08-07T02:50:55.783Z] - Analysis saved to BDD service successfully
+[2025-08-07T02:50:55.784Z] - Result: {"artworkId":"6894148f0710d858499018bf","analysisId":"6894148f0710d858499018c1"}
+[2025-08-07T02:56:46.137Z] === AI Route Debug ===
+[2025-08-07T02:56:46.140Z] - Request received at /analyze
+[2025-08-07T02:56:46.140Z] - Method: POST
+[2025-08-07T02:56:46.142Z] - Headers: {"host":"localhost:5000","connection":"keep-alive","content-length":"30196","sec-ch-ua-platform":"\"Windows\"","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjliOWFjN2U2MTI4OGI2YzgyMWU4MiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU0NTMzMjE4LCJqdGkiOiIxYWY1YmI3OTllODExMjU1NWE0MjUyMjhiNDE2YjU4YiIsImV4cCI6MTc1NDYxOTYxOCwiYXVkIjoibnlkYXJ0LXVzZXJzIiwiaXNzIjoibnlkYXJ0LWFkdmlzb3IifQ.7AqwnJ3QkN5UHF3lFGBh_cM4gpHDYyiz0P096c98uWI","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","content-type":"multipart/form-data; boundary=----WebKitFormBoundaryXiY0qUcKiB2IcKQQ","sec-ch-ua-mobile":"?0","accept":"*/*","origin":"http://localhost:3000","sec-fetch-site":"same-site","sec-fetch-mode":"cors","sec-fetch-dest":"empty","referer":"http://localhost:3000/","accept-encoding":"gzip, deflate, br, zstd","accept-language":"en-US,en;q=0.9"}
+[2025-08-07T02:56:46.144Z] - Body keys: 
+[2025-08-07T02:56:46.145Z] - Files: undefined
+[2025-08-07T02:56:46.151Z] Auth middleware debug:
+[2025-08-07T02:56:46.151Z] - Auth header present: true
+[2025-08-07T02:56:46.152Z] - Auth header starts with Bearer: true
+[2025-08-07T02:56:46.153Z] - Token length: 303
+[2025-08-07T02:56:46.154Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-07T02:56:46.170Z] - Token decoded successfully
+[2025-08-07T02:56:46.170Z] - Decoded payload: {
+  "id": "6869b9ac7e61288b6c821e82",
+  "role": "user",
+  "iat": 1754533218,
+  "jti": "1af5bb799e8112555a425228b416b58b",
+  "exp": 1754619618,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-07T02:56:46.171Z] - Decoded id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:56:46.172Z] - Decoded userId: undefined
+[2025-08-07T02:56:46.173Z] - Set req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-07T02:56:46.173Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:56:55.379Z] === AI Controller Debug ===
+[2025-08-07T02:56:55.380Z] - req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-07T02:56:55.380Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-07T02:56:55.380Z] - req.headers.authorization present: true
+[2025-08-07T02:56:55.381Z] - User is authenticated, attempting to save to BDD service
+[2025-08-07T02:56:55.463Z] - Analysis saved to BDD service successfully
+[2025-08-07T02:56:55.464Z] - Result: {"artworkId":"689415f7cd7edd941786f207","analysisId":"689415f7cd7edd941786f209"}
+[2025-08-11T00:48:59.910Z] Auth middleware debug:
+[2025-08-11T00:48:59.912Z] - Auth header present: true
+[2025-08-11T00:48:59.913Z] - Auth header starts with Bearer: true
+[2025-08-11T00:48:59.913Z] - Token length: 303
+[2025-08-11T00:48:59.914Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-11T00:48:59.920Z] - Token decoded successfully
+[2025-08-11T00:48:59.920Z] - Decoded payload: {
+  "id": "6869b9ac7e61288b6c821e82",
+  "role": "user",
+  "iat": 1754873168,
+  "jti": "58217ae13f5edb1eb549c311ad8193c3",
+  "exp": 1754959568,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-11T00:48:59.921Z] - Decoded id: 6869b9ac7e61288b6c821e82
+[2025-08-11T00:48:59.921Z] - Decoded userId: undefined
+[2025-08-11T00:48:59.922Z] - Set req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-11T00:48:59.922Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-12T22:25:54.980Z] Auth middleware debug:
+[2025-08-12T22:25:54.982Z] - Auth header present: true
+[2025-08-12T22:25:54.982Z] - Auth header starts with Bearer: true
+[2025-08-12T22:25:54.982Z] - Token length: 303
+[2025-08-12T22:25:54.983Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-12T22:25:54.988Z] - Token decoded successfully
+[2025-08-12T22:25:54.988Z] - Decoded payload: {
+  "id": "6869b9ac7e61288b6c821e82",
+  "role": "user",
+  "iat": 1755037483,
+  "jti": "5472a64535688014c36e307f1899b4e9",
+  "exp": 1755123883,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-12T22:25:54.988Z] - Decoded id: 6869b9ac7e61288b6c821e82
+[2025-08-12T22:25:54.989Z] - Decoded userId: undefined
+[2025-08-12T22:25:54.989Z] - Set req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-12T22:25:54.990Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-13T23:20:14.288Z] Auth middleware debug:
+[2025-08-13T23:20:14.294Z] - Auth header present: true
+[2025-08-13T23:20:14.295Z] - Auth header starts with Bearer: true
+[2025-08-13T23:20:14.296Z] - Token length: 303
+[2025-08-13T23:20:14.296Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-13T23:20:14.300Z] - Token decoded successfully
+[2025-08-13T23:20:14.300Z] - Decoded payload: {
+  "id": "6869b9ac7e61288b6c821e82",
+  "role": "user",
+  "iat": 1755127152,
+  "jti": "56e3f6ca54d9b6fe371bc917d6131c67",
+  "exp": 1755213552,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-13T23:20:14.301Z] - Decoded id: 6869b9ac7e61288b6c821e82
+[2025-08-13T23:20:14.301Z] - Decoded userId: undefined
+[2025-08-13T23:20:14.302Z] - Set req.user: {"_id":"6869b9ac7e61288b6c821e82"}
+[2025-08-13T23:20:14.302Z] - req.user._id: 6869b9ac7e61288b6c821e82
+[2025-08-13T23:50:36.349Z] Auth middleware debug:
+[2025-08-13T23:50:36.352Z] - Auth header present: true
+[2025-08-13T23:50:36.352Z] - Auth header starts with Bearer: true
+[2025-08-13T23:50:36.352Z] - Token length: 303
+[2025-08-13T23:50:36.353Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-13T23:50:36.356Z] - Token decoded successfully
+[2025-08-13T23:50:36.356Z] - Decoded payload: {
+  "id": "683cece601d9d0520ff1aca2",
+  "role": "user",
+  "iat": 1755129008,
+  "jti": "b2f18d11851d4be007302e725d598e19",
+  "exp": 1755215408,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-13T23:50:36.357Z] - Decoded id: 683cece601d9d0520ff1aca2
+[2025-08-13T23:50:36.357Z] - Decoded userId: undefined
+[2025-08-13T23:50:36.357Z] - Set req.user: {"_id":"683cece601d9d0520ff1aca2"}
+[2025-08-13T23:50:36.358Z] - req.user._id: 683cece601d9d0520ff1aca2
+[2025-08-13T23:50:52.907Z] === AI Controller Debug ===
+[2025-08-13T23:50:52.908Z] - req.user: {"_id":"683cece601d9d0520ff1aca2"}
+[2025-08-13T23:50:52.908Z] - req.user._id: 683cece601d9d0520ff1aca2
+[2025-08-13T23:50:52.909Z] - req.headers.authorization present: true
+[2025-08-13T23:50:52.909Z] - User is authenticated, attempting to save to BDD service
+[2025-08-13T23:50:52.925Z] Error saving to BDD service: Failed to save analysis: No token, authorization denied
+[2025-08-13T23:50:52.926Z] - Error details: Failed to save analysis: No token, authorization denied
+[2025-08-13T23:50:52.926Z] - Continuing with temporary analysis (no database save)
+[2025-08-13T23:51:03.636Z] Auth middleware debug:
+[2025-08-13T23:51:03.637Z] - Auth header present: true
+[2025-08-13T23:51:03.637Z] - Auth header starts with Bearer: true
+[2025-08-13T23:51:03.638Z] - Token length: 303
+[2025-08-13T23:51:03.638Z] - Token starts with: eyJhbGciOiJIUzI1NiIs...
+[2025-08-13T23:51:03.639Z] - Token decoded successfully
+[2025-08-13T23:51:03.640Z] - Decoded payload: {
+  "id": "683cece601d9d0520ff1aca2",
+  "role": "user",
+  "iat": 1755129008,
+  "jti": "b2f18d11851d4be007302e725d598e19",
+  "exp": 1755215408,
+  "aud": "nydart-users",
+  "iss": "nydart-advisor"
+}
+[2025-08-13T23:51:03.640Z] - Decoded id: 683cece601d9d0520ff1aca2
+[2025-08-13T23:51:03.640Z] - Decoded userId: undefined
+[2025-08-13T23:51:03.641Z] - Set req.user: {"_id":"683cece601d9d0520ff1aca2"}
+[2025-08-13T23:51:03.641Z] - req.user._id: 683cece601d9d0520ff1aca2
+[2025-08-13T23:51:31.932Z] === AI Controller Debug ===
+[2025-08-13T23:51:31.934Z] - req.user: {"_id":"683cece601d9d0520ff1aca2"}
+[2025-08-13T23:51:31.935Z] - req.user._id: 683cece601d9d0520ff1aca2
+[2025-08-13T23:51:31.937Z] - req.headers.authorization present: true
+[2025-08-13T23:51:31.938Z] - User is authenticated, attempting to save to BDD service
+[2025-08-13T23:51:31.950Z] Error saving to BDD service: Failed to save analysis: No token, authorization denied
+[2025-08-13T23:51:31.951Z] - Error details: Failed to save analysis: No token, authorization denied
+[2025-08-13T23:51:31.952Z] - Continuing with temporary analysis (no database save)

@@ -1,55 +1,86 @@
 const axios = require('axios');
 
-const DB_SERVICE_URL = 'http://localhost:5001/api';
+const BDD_SERVICE_URL = process.env.BDD_SERVICE_URL || 'http://localhost:5001/api';
+
+const axiosInstance = axios.create({
+    baseURL: BDD_SERVICE_URL,
+    timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
 
 class ArtworkService {
-    // Store analysis results in the database
+    // Save analysis results to BDD service
     static async saveAnalysis(artworkData, analysisResults) {
         try {
-            // First, create or update the artwork
-            const artworkPayload = {
-                userId: artworkData.userId || 'anonymous', // You'll want to implement proper user management
-                title: artworkData.title || 'Untitled Artwork',
+            let artworkId = null;
+
+            // Create artwork in BDD service
+            if (artworkData.userId) {
+                const artworkResponse = await axiosInstance.post('/artworks', {
+                    userId: artworkData.userId,
+                    title: artworkData.title,
+                    description: artworkData.description,
+                    imageUrl: artworkData.imageUrl,
+                    metadata: {
+                        size: artworkData.metadata?.size || 'Unknown',
+                        medium: artworkData.metadata?.medium || 'Digital',
+                        style: artworkData.metadata?.style || 'Unknown'
+                    }
+                });
+
+                artworkId = artworkResponse.data._id;
+            } else {
+                // No userId provided, skip database save
+                return { artworkId: null, analysisId: null };
+            }
+
+            // Create separate analysis record
+            const analysisData = {
+                artworkId: artworkId,
+                userId: artworkData.userId,
+                filename: artworkData.filename || 'unknown',
+                analysisType: artworkData.analysisType,
+                modelUsed: 'gpt-4o',
+                fileSize: artworkData.fileSize,
+                contentType: artworkData.contentType,
                 imageUrl: artworkData.imageUrl,
-                description: artworkData.description || '',
-            };
-
-            // Create artwork if it doesn't exist
-            const artworkResponse = await axios.post(`${DB_SERVICE_URL}/artworks`, artworkPayload);
-            const artworkId = artworkResponse.data._id;
-
-            // Add the analysis to the artwork
-            const analysisPayload = {
-                analysis: {
-                    type: artworkData.analysisType || 'general',
-                    results: {
-                        technicalQuality: analysisResults.technicalAssessment,
-                        strengths: analysisResults.strengths,
-                        areasForImprovement: analysisResults.improvements,
-                        suggestions: analysisResults.suggestions,
-                        composition: analysisResults.composition,
-                        colorTheory: analysisResults.colorTheory,
-                        styleContext: analysisResults.styleAndContext
-                    },
-                    learningResources: analysisResults.learning_resources
+                analysis: analysisResults.technicalQuality,
+                suggestions: analysisResults.suggestions || [],
+                learningResources: analysisResults.learningResources || [],
+                results: {
+                    technicalQuality: analysisResults.technicalQuality || '',
+                    strengths: analysisResults.strengths || '',
+                    areasForImprovement: analysisResults.areasForImprovement || '',
+                    composition: analysisResults.composition || '',
+                    colorTheory: analysisResults.colorTheory || '',
+                    styleContext: analysisResults.styleContext || ''
                 }
             };
 
-            // Update the artwork with the new analysis
-            await axios.patch(`${DB_SERVICE_URL}/artworks/${artworkId}/analysis`, analysisPayload);
+            const analysisResponse = await axiosInstance.post('/analyses', analysisData);
+            const analysisId = analysisResponse.data._id;
 
-            return artworkId;
+            return {
+                artworkId: artworkId,
+                analysisId: analysisId
+            };
         } catch (error) {
-            console.error('Error saving analysis:', error);
-            throw new Error('Failed to save analysis results');
+            console.error('Error saving analysis to BDD service:', error);
+            if (error.response) {
+                console.error('BDD Service response:', error.response.data);
+                throw new Error(`Failed to save analysis: ${error.response.data.message || error.message}`);
+            }
+            throw new Error(`Failed to save analysis: ${error.message}`);
         }
     }
 
-    // Fetch previous analyses for an artwork
+    // Get previous analyses for an artwork
     static async getPreviousAnalyses(artworkId) {
         try {
-            const response = await axios.get(`${DB_SERVICE_URL}/artworks/${artworkId}`);
-            return response.data.analyses;
+            const response = await axiosInstance.get(`/analyses/artwork/${artworkId}`);
+            return response.data.analyses || [];
         } catch (error) {
             console.error('Error fetching previous analyses:', error);
             return [];
@@ -59,10 +90,32 @@ class ArtworkService {
     // Get all artworks for a user
     static async getUserArtworks(userId) {
         try {
-            const response = await axios.get(`${DB_SERVICE_URL}/artworks/user/${userId}`);
-            return response.data;
+            const response = await axiosInstance.get(`/artworks/user/${userId}`);
+            return response.data || [];
         } catch (error) {
             console.error('Error fetching user artworks:', error);
+            return [];
+        }
+    }
+
+    // Get analysis by ID
+    static async getAnalysis(analysisId) {
+        try {
+            const response = await axiosInstance.get(`/analyses/${analysisId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching analysis:', error);
+            throw new Error('Analysis not found');
+        }
+    }
+
+    // Get recent analyses for a user
+    static async getRecentAnalyses(userId, limit = 10) {
+        try {
+            const response = await axiosInstance.get(`/analyses/user/${userId}?limit=${limit}`);
+            return response.data.analyses || [];
+        } catch (error) {
+            console.error('Error fetching recent analyses:', error);
             return [];
         }
     }

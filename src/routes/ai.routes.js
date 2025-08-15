@@ -2,14 +2,17 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { 
-    analyzeArtwork,
-    getAnalysis,
-    getRecentAnalyses,
-    deleteAnalysis
-} = require('../controllers/ai.controller');
+const { analyzeArtwork } = require('../controllers/ai.controller');
+const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
+
+// Simple file logging function
+const logToFile = (message) => {
+    const logPath = path.join(__dirname, '../../debug.log');
+    const timestamp = new Date().toISOString();
+    fs.appendFileSync(logPath, `[${timestamp}] ${message}\n`);
+};
 
 // Ensure upload directory exists
 const uploadDir = path.join(__dirname, '../../temp/uploads');
@@ -17,43 +20,67 @@ if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Configure multer for image upload
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        // Double-check directory exists
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        cb(null, uploadDir);
-    },
-    filename: function (req, file, cb) {
-        // Add timestamp and random string to prevent filename collisions
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
+// Configure multer for file uploads
 const upload = multer({
-    storage: storage,
-    limits: {
-        fileSize: 10 * 1024 * 1024, // 10MB limit
-    },
-    fileFilter: (req, file, cb) => {
-        const allowedTypes = /jpeg|jpg|png|gif|webp|bmp/;
-        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = allowedTypes.test(file.mimetype);
-
-        if (extname && mimetype) {
-            return cb(null, true);
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, 'temp/uploads/');
+        },
+        filename: (req, file, cb) => {
+            const timestamp = Date.now();
+            const randomId = Math.floor(Math.random() * 1000000000);
+            const extension = path.extname(file.originalname);
+            cb(null, `${timestamp}-${randomId}${extension}`);
         }
-        cb(new Error('Only image files are allowed!'));
+    }),
+    limits: {
+        fileSize: 10 * 1024 * 1024 // 10MB limit
     }
 });
 
-// Routes
-router.post('/analyze', upload.single('image'), analyzeArtwork);
-router.get('/analysis/:id', getAnalysis);
-router.get('/analyses', getRecentAnalyses);
-router.delete('/analysis/:id', deleteAnalysis);
+// Simple file upload endpoint
+router.post('/upload', authMiddleware, upload.single('image'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No image file provided' });
+        }
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+        if (!allowedTypes.includes(req.file.mimetype)) {
+            fs.unlinkSync(req.file.path);
+            return res.status(400).json({ 
+                error: 'Invalid file type. Supported formats: JPEG, PNG, GIF, WebP, BMP' 
+            });
+        }
+
+        // Save image to permanent storage
+        const imageFileName = `${Date.now()}-${req.file.originalname}`;
+        const imagePath = path.join(uploadDir, imageFileName);
+
+        try {
+            fs.copyFileSync(req.file.path, imagePath);
+            fs.unlinkSync(req.file.path); // Clean up temp file
+        } catch (copyError) {
+            console.error('Error copying file:', copyError);
+            throw new Error(`Failed to save image: ${copyError.message}`);
+        }
+
+        res.json({
+            imageUrl: `${req.protocol}://${req.get('host')}/uploads/${imageFileName}`
+        });
+    } catch (error) {
+        // Clean up the uploaded file in case of error
+        if (req.file && req.file.path) {
+            fs.unlinkSync(req.file.path);
+        }
+        res.status(500).json({ 
+            error: `Failed to upload image: ${error.message}` 
+        });
+    }
+});
+
+// Apply auth middleware to the analyze route
+router.post('/analyze', authMiddleware, upload.single('image'), analyzeArtwork);
 
 module.exports = router; 
