@@ -2,26 +2,16 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const connectDB = require('./config/db.config');
 const aiRoutes = require('./routes/ai.routes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
-
-// Debug environment variables
-console.log('Environment check:');
-console.log('- PORT:', PORT);
-console.log('- OpenAI API Key exists:', !!process.env.OPENAI_API_KEY);
-console.log('- OpenAI API Key length:', process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.length : 0);
-
 // CORS configuration
 const corsOptions = {
   origin: 'http://localhost:3000', // Frontend URL
   methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 };
 
